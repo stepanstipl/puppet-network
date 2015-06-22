@@ -40,3 +40,11 @@ namespace :doc do
     :generate,
   ]
 end
+
+namespace :module do
+  desc "Display module version"
+  task :version do
+    m = Blacksmith::Modulefile.new
+    puts m.version
+  end
+end
