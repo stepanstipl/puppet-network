@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!file.README.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="puppet_manifest_list_link"
+        href="puppet_manifest_list.html">
+      Puppet Manifest List
+    </a>
+  
+    <a class="full_list_link" id="puppet_plugin_list_link"
+        href="puppet_plugin_list.html">
+      Puppet Plugin List
+    </a>
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>Puppet Network Module</h1>
+
+<p>master branch <a href="http://travis-ci.org/razorsedge/puppet-network"><img src="https://secure.travis-ci.org/razorsedge/puppet-network.png?branch=master" alt="Build Status"></a>
+develop branch <a href="http://travis-ci.org/razorsedge/puppet-network"><img src="https://secure.travis-ci.org/razorsedge/puppet-network.png?branch=develop" alt="Build Status"></a></p>
+
+<h2>Introduction</h2>
+
+<p>This module manages Red Hat/Fedora traditional network configuration.</p>
+
+<p>It allows for static, dhcp, and bootp configuration of normal and bonded interfaces as well as bridges and VLANs.  There is support for aliases on interfaces as well as alias ranges.  It can configure static routes.  It can configure MTU, DHCP_HOSTNAME, ETHTOOL_OPTS, and BONDING_OPTS on a per-interface basis.</p>
+
+<p>It can configure the following files:</p>
+
+<ul>
+<li>/etc/sysconfig/network</li>
+<li>/etc/sysconfig/networking-scripts/route-*</li>
+<li>/etc/sysconfig/networking-scripts/ifcfg-*</li>
+</ul>
+
+<p>Class and Define documentation is available via puppetdoc.</p>
+
+<h2>Examples</h2>
+
+<p>Please note that the following examples do not depict all of the parameters supported by each class or define.</p>
+
+<p>Global network settings:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;network::global&#39;:
+  gateway =&gt; &#39;1.2.3.1&#39;,
+}
+</code></pre>
+
+<p>Global network setting (IPv6 enabled):</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;network::global&#39;:
+  ipv6gateway    =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:1&#39;,
+  ipv6networking =&gt; true,
+}
+</code></pre>
+
+<p>Global network setting with IPv6 enabled with optional default device for IPv6 traffic:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;network::global&#39;:
+  ipv6gateway    =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:1&#39;,
+  ipv6networking =&gt; true,
+  ipv6defaultdev =&gt; &#39;eth1&#39;,
+}
+</code></pre>
+
+<p>Normal interface - static (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">network::if::static { &#39;eth0&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;1.2.3.248&#39;,
+  netmask   =&gt; &#39;255.255.255.128&#39;,
+}
+</code></pre>
+
+<p>Normal interface - static:</p>
+
+<pre class="code ruby"><code class="ruby">network::if::static { &#39;eth1&#39;:
+  ensure       =&gt; &#39;up&#39;,
+  ipaddress    =&gt; &#39;1.2.3.4&#39;,
+  netmask      =&gt; &#39;255.255.255.0&#39;,
+  gateway      =&gt; &#39;1.2.3.1&#39;,
+  macaddress   =&gt; &#39;fe:fe:fe:aa:aa:aa&#39;,
+  ipv6init     =&gt; true,
+  ipv6address  =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:cdef/64&#39;,
+  ipv6gateway  =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:1&#39;,
+  mtu          =&gt; &#39;9000&#39;,
+  ethtool_opts =&gt; &#39;autoneg off speed 1000 duplex full&#39;,
+}
+</code></pre>
+
+<p>Normal interface - dhcp (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">network::if::dynamic { &#39;eth2&#39;:
+  ensure =&gt; &#39;up&#39;,
+}
+</code></pre>
+
+<p>Normal interface - dhcp:</p>
+
+<pre class="code ruby"><code class="ruby">network::if::dynamic { &#39;eth3&#39;:
+  ensure        =&gt; &#39;up&#39;,
+  macaddress    =&gt; &#39;fe:fe:fe:ae:ae:ae&#39;,
+  mtu           =&gt; &#39;1500&#39;,
+  dhcp_hostname =&gt; $::hostname,
+  ethtool_opts  =&gt; &#39;autoneg off speed 100 duplex full&#39;,
+}
+</code></pre>
+
+<p>Normal interface - bootp (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">network::if::dynamic { &#39;eth2&#39;:
+  ensure     =&gt; &#39;up&#39;,
+  macaddress =&gt; &#39;fe:fe:fe:fe:fe:fe&#39;,
+  bootproto  =&gt; &#39;bootp&#39;,
+}
+</code></pre>
+
+<p>Normal interface - bridged (the corresponding network::bridge::* may also have to be defined):</p>
+
+<pre class="code ruby"><code class="ruby">network::if::bridge { &#39;eth0&#39;:
+  ensure =&gt; &#39;up&#39;,
+  bridge =&gt; &#39;br0&#39;
+}
+</code></pre>
+
+<p>Aliased interface:</p>
+
+<pre class="code ruby"><code class="ruby">network::alias { &#39;eth0:1&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;1.2.3.5&#39;,
+  netmask   =&gt; &#39;255.255.255.0&#39;,
+}
+</code></pre>
+
+<p>Aliased interface (allow non-root user to manage):</p>
+
+<pre class="code ruby"><code class="ruby">network::alias { &#39;em2:1&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;10.22.33.45&#39;,
+  netmask   =&gt; &#39;255.255.254.0&#39;,
+  userctl   =&gt; true,
+}
+</code></pre>
+
+<p>Aliased interface (range):</p>
+
+<pre class="code ruby"><code class="ruby">network::alias::range { &#39;eth1&#39;:
+  ensure          =&gt; &#39;up&#39;,
+  ipaddress_start =&gt; &#39;1.2.3.5&#39;,
+  ipaddress_end   =&gt; &#39;1.2.3.20&#39;,
+  clonenum_start  =&gt; &#39;0&#39;,
+  noaliasrouting  =&gt; true,
+}
+</code></pre>
+
+<p>Bonded master interface - static:</p>
+
+<pre class="code ruby"><code class="ruby">network::bond::static { &#39;bond0&#39;:
+  ensure       =&gt; &#39;up&#39;,
+  ipaddress    =&gt; &#39;1.2.3.5&#39;,
+  netmask      =&gt; &#39;255.255.255.0&#39;,
+  gateway      =&gt; &#39;1.2.3.1&#39;,
+  ipv6init     =&gt; true,
+  ipv6address  =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:cdef&#39;,
+  ipv6gateway  =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:1&#39;,
+  mtu          =&gt; &#39;9000&#39;,
+  bonding_opts =&gt; &#39;mode=active-backup miimon=100&#39;,
+}
+</code></pre>
+
+<p>Bonded master interface - dhcp:</p>
+
+<pre class="code ruby"><code class="ruby">network::bond::dynamic { &#39;bond2&#39;:
+  ensure       =&gt; &#39;up&#39;,
+  mtu          =&gt; &#39;8000&#39;,
+  bonding_opts =&gt; &#39;mode=active-backup arp_interval=60 arp_ip_target=192.168.1.254&#39;,
+}
+</code></pre>
+
+<p>Bonded master interface - bridged (the corresponding network::bridge::* may also have to be defined):</p>
+
+<pre class="code ruby"><code class="ruby">network::bond::bridge { &#39;bond2&#39;:
+  ensure       =&gt; &#39;up&#39;,
+  bridge       =&gt; &#39;br3&#39;,
+  bonding_opts =&gt; &#39;mode=802.3ad lacp_rate=fast miimon=100&#39;,
+}
+</code></pre>
+
+<p>Bonded slave interface:</p>
+
+<pre class="code ruby"><code class="ruby">network::bond::slave { &#39;eth1&#39;:
+  macaddress   =&gt; $macaddress_eth1,
+  ethtool_opts =&gt; &#39;autoneg off speed 1000 duplex full&#39;,
+  master       =&gt; &#39;bond0&#39;,
+}
+</code></pre>
+
+<p>Bridge interface - no IP:</p>
+
+<pre class="code ruby"><code class="ruby">network::bridge { &#39;br0&#39;:
+  ensure        =&gt; &#39;up&#39;,
+  stp           =&gt; true,
+  delay         =&gt; &#39;0&#39;,
+  bridging_opts =&gt; &#39;priority=65535&#39;,
+}
+</code></pre>
+
+<p>Bridge interface - static (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">network::bridge::static { &#39;br1&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;10.21.30.248&#39;,
+  netmask   =&gt; &#39;255.255.255.128&#39;,
+}
+</code></pre>
+
+<p>Bridge interface - static:</p>
+
+<pre class="code ruby"><code class="ruby">network::bridge::static { &#39;br2&#39;:
+  ensure        =&gt; &#39;up&#39;,
+  ipaddress     =&gt; &#39;1.2.3.8&#39;,
+  netmask       =&gt; &#39;255.255.0.0&#39;,
+  stp           =&gt; true,
+  delay         =&gt; &#39;0&#39;,
+  ipv6init      =&gt; true,
+  ipv6address   =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:cdef&#39;,
+  ipv6gateway   =&gt; &#39;123:4567:89ab:cdef:123:4567:89ab:1&#39;,
+  bridging_opts =&gt; &#39;priority=65535&#39;,
+}
+</code></pre>
+
+<p>Bridge interface - dhcp (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">network::bridge::dynamic { &#39;br3&#39;:
+  ensure =&gt; &#39;up&#39;,
+}
+</code></pre>
+
+<p>Static interface routes:</p>
+
+<pre class="code ruby"><code class="ruby">network::route { &#39;eth0&#39;:
+  ipaddress =&gt; [ &#39;192.168.2.0&#39;, &#39;10.0.0.0&#39;, ],
+  netmask   =&gt; [ &#39;255.255.255.0&#39;, &#39;255.0.0.0&#39;, ],
+  gateway   =&gt; [ &#39;192.168.1.1&#39;, &#39;10.0.0.1&#39;, ],
+}
+</code></pre>
+
+<p>Normal interface - VLAN - static (minimal):</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;network::global&#39;:
+  vlan =&gt; &#39;yes&#39;,
+}
+
+network::if::static { &#39;eth0.330&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;10.2.3.248&#39;,
+  netmask   =&gt; &#39;255.255.255.0&#39;,
+}
+</code></pre>
+
+<p>Flush IP addresses:</p>
+
+<p>Network scripts on RHEL7 do not flush IP addresses, so you eventually end up
+with multiple of them, passing <code>$flush =&gt; true</code> will run <code>ip addr flush</code> on
+given interface before notifying network service.</p>
+
+<pre class="code ruby"><code class="ruby">network::if::static { &#39;eth0&#39;:
+  ensure    =&gt; &#39;up&#39;,
+  ipaddress =&gt; &#39;1.2.3.4&#39;,
+  netmask   =&gt; &#39;255.255.255.0&#39;,
+  flush     =&gt; true
+}
+</code></pre>
+
+<h2>Notes</h2>
+
+<ul>
+<li>Runs under Puppet 2.7 and later.</li>
+<li>Only works with RedHat-ish systems.</li>
+<li>Read /usr/share/doc/initscripts-*/sysconfig.txt for underlying details.</li>
+<li>Read /usr/share/doc/kernel-doc-*/Documentation/networking/bonding.txt for underlying details.</li>
+<li>Read /etc/sysconfig/network-scripts/ifup-aliases for underlying details.</li>
+<li>Only tested on CentOS 5.5 and CentOS 6.3.</li>
+<li>There is an assumption that an aliased interface will never use DHCP.</li>
+<li>bootp support is unknown for bonded interfaces. Thus no bootp bond support in this module.</li>
+<li>It is assumed that if you create a bond that you also create the slave interface(s).</li>
+<li>It is assumed that if you create an alias that you also create the parent interface.</li>
+<li>network::route requires the referenced device to also be defined via network::if or network::bond.</li>
+<li>For VLANs to work, <code>Class[&#39;network::global&#39;]</code> must have parameter <code>vlan</code> set to <code>yes</code>.</li>
+<li>To enable IPv6 you have to set both <code>ipv6networking</code> in <code>Class[&#39;network::global&#39;]</code> to <code>true</code> and <code>ipv6init</code> in <code>network::if::static</code> to <code>true</code>.</li>
+</ul>
+
+<h2>Issues</h2>
+
+<ul>
+<li>Setting ETHTOOL_OPTS, MTU, or BONDING_OPTS and then unsetting will not revert the running config to defaults.</li>
+<li>Changes to any configuration will result in &quot;service network restart&quot;.  This could cause network inaccessability for the host if the network configuration is incorrect.</li>
+<li>Modifying or creating a slave interface after the master has been created will not change the running config.</li>
+<li>There is presently no support for removing an interface.</li>
+</ul>
+
+<h2>TODO</h2>
+
+<ul>
+<li>Support /etc/sysconfig/network-scripts/rule-&lt;interface-name&gt;</li>
+<li>Expand support for IPv6.</li>
+<li>Support for more than Ethernet links.</li>
+<li>Testing of VLAN support (it should Just Work(TM)).</li>
+</ul>
+
+<p>See TODO.md for more items.</p>
+
+<h2>Deprecation Warning</h2>
+
+<p>The define <code>network::global</code> will be replaced by a paramterized class in version 3.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.</p>
+
+<p>This:</p>
+
+<pre class="code ruby"><code class="ruby">network::global { &#39;default&#39;:
+  # blah
+}
+</code></pre>
+
+<p>would become this:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;network::global&#39;:
+  # blah
+}
+</code></pre>
+
+<p>The define <code>network::if::alias</code> and <code>network::bond::alias</code> will be merged into <code>network::alias</code> in version 3.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.</p>
+
+<p>This:</p>
+
+<pre class="code ruby"><code class="ruby">network::if::alias { &#39;eth0:1&#39;:
+  # blah
+}
+</code></pre>
+
+<p>would become this:</p>
+
+<pre class="code ruby"><code class="ruby">network::alias { &#39;eth0:1&#39;:
+  # blah
+}
+</code></pre>
+
+<p>The define <code>network::route</code> will have parameter <code>address</code> renamed to <code>ipaddress</code> in version 3.0.0 of this module.  This is for the purpose of consistency with all the other defines in the <code>network</code> class.  Please be aware that your manifests may need to change to account for the new syntax.</p>
+
+<p>This:</p>
+
+<pre class="code ruby"><code class="ruby">network::route { &#39;eth0&#39;:
+  address =&gt; &#39;192.168.17.0&#39;,
+  # blah
+}
+</code></pre>
+
+<p>would become this:</p>
+
+<pre class="code ruby"><code class="ruby">network::route { &#39;eth0&#39;:
+  ipaddress =&gt; &#39;192.168.17.0&#39;,
+  # blah
+}
+</code></pre>
+
+<h2>Contributing</h2>
+
+<p>Please see DEVELOP.md for contribution information.</p>
+
+<h2>License</h2>
+
+<p>Please see LICENSE file.</p>
+
+<h2>Copyright</h2>
+
+<p>Copyright (C) 2011 Mike Arnold <a href="mailto:mike@razorsedge.org">mike@razorsedge.org</a></p>
+
+<p><a href="https://github.com/razorsedge/puppet-network">razorsedge/puppet-network on GitHub</a></p>
+
+<p><a href="http://forge.puppetlabs.com/razorsedge/network">razorsedge/network on Puppet Forge</a></p>
+</div></div>
+
+    <div id="footer">
+  Generated on Mon Jun 29 11:06:04 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-2.0.0).
+</div>
+
+  </body>
+</html>

@@ -14,3 +14,37 @@ end
 
 PuppetSyntax.exclude_paths = ["spec/**/*", "pkg/**/*", "vender/**/*"]
 PuppetSyntax.hieradata_paths = ["**/data/**/*.yaml", "hieradata/**/*.yaml", "hiera*.yaml"]
+
+Rake::Task['beaker'].clear
+task :beaker do
+  puts "Placeholder to go around the fact that there are not beaker tests for this module"
+end
+
+namespace :doc do
+  docs_dir = File.dirname(__FILE__) + '/doc'
+
+  desc 'Generate documentation with the puppet strings command'
+  task :generate do
+    system "bundle exec puppet module install puppetlabs/strings"
+    system "bundle exec puppet strings"
+  end
+
+  desc 'Clean current documentation'
+  task :clean do
+    FileUtils.rm_rf(Dir.glob("#{docs_dir}/*"))
+  end
+
+  desc "Run clean and generate"
+  task :update => [
+    :clean,
+    :generate,
+  ]
+end
+
+namespace :module do
+  desc "Display module version"
+  task :version do
+    m = Blacksmith::Modulefile.new
+    puts m.version
+  end
+end
