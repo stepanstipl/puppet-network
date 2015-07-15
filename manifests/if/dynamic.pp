@@ -11,6 +11,7 @@
 #   $mtu           - optional
 #   $dhcp_hostname - optional
 #   $ethtool_opts  - optional
+#   $peerdns       - optional - defaults to true
 #
 # === Actions:
 #
@@ -45,7 +46,8 @@ define network::if::dynamic (
   $mtu = undef,
   $dhcp_hostname = undef,
   $ethtool_opts = undef,
-  $linkdelay = undef
+  $linkdelay = undef,
+  $peerdns = true
 ) {
   # Validate our regular expressions
   $states = [ '^up$', '^down$' ]
@@ -60,6 +62,7 @@ define network::if::dynamic (
   }
   # Validate booleans
   validate_bool($userctl)
+  validate_bool($peerdns)
 
   network_if_base { $title:
     ensure        => $ensure,
@@ -73,5 +76,6 @@ define network::if::dynamic (
     dhcp_hostname => $dhcp_hostname,
     ethtool_opts  => $ethtool_opts,
     linkdelay     => $linkdelay,
+    peerdns       => $peerdns
   }
 } # define network::if::dynamic
